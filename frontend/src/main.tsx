@@ -55,7 +55,7 @@ const SLOWNIKI: Record<string, string[]> = {
   stan_techniczny: ["Nieustalony", "Sprawny", "Niesprawny"],
 };
 
-/** Wyświetla stałą identyfikację systemu, bez używania niezweryfikowanych znaków graficznych firmy. */
+/** Wyświetla oficjalne logo AUNDE zapisane lokalnie oraz nazwę systemu i konto użytkownika. */
 function Naglowek({
   sesja,
   wyloguj,
@@ -65,9 +65,13 @@ function Naglowek({
 }): React.ReactElement {
   return (
     <header className="naglowek">
-      <div className="marka">
-        AUNDE<span>POLAND</span>
-      </div>
+      <img
+        className="marka"
+        src="/logo-aunde.png"
+        alt="AUNDE"
+        width="150"
+        height="45"
+      />
       <div className="nazwa">
         Metrologia<span>Zarządzanie przyrządami pomiarowymi</span>
       </div>

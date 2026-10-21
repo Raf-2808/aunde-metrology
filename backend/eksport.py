@@ -26,11 +26,12 @@ KOLUMNY = [
     ("Komentarz do dat", "komentarz_dat"),
     ("Ostatni odczyt QR", "ostatni_qr"),
     ("Liczba odczytów QR", "liczba_qr"),
+    ("Adres karty QR", None),
     ("Kod QR", None),
 ]
 
 
-# Generuje XLSX dla podanych danych i aktualnych tokenów; nie tworzy tokenów ani nie zmienia ewidencji.
+# Generuje XLSX z osobną kolumną adresu i ostatnią kolumną obrazu QR; nie zmienia tokenów ani ewidencji.
 def zbuduj_excel(rekordy: list[dict], tokeny: dict[str, str], adres: str) -> bytes:
     ksiazka = Workbook()
     arkusz = ksiazka.active
@@ -65,10 +66,10 @@ def zbuduj_excel(rekordy: list[dict], tokeny: dict[str, str], adres: str) -> byt
         obrazy.append(bufor)
         obraz = Image(bufor)
         obraz.width = obraz.height = 160
-        arkusz.add_image(obraz, f"S{lp + 1}")
+        arkusz.add_image(obraz, f"T{lp + 1}")
         komorka = arkusz.cell(lp + 1, 19, url)
         komorka.hyperlink = url
-        komorka.alignment = Alignment(vertical="bottom", wrap_text=True)
+        komorka.alignment = Alignment(vertical="center", wrap_text=True)
         arkusz.row_dimensions[lp + 1].height = 155
     for komorka in arkusz[1]:
         komorka.fill = PatternFill("solid", fgColor="17324D")
@@ -77,7 +78,9 @@ def zbuduj_excel(rekordy: list[dict], tokeny: dict[str, str], adres: str) -> byt
     from openpyxl.utils import get_column_letter
 
     for nr in range(1, len(KOLUMNY) + 1):
-        arkusz.column_dimensions[get_column_letter(nr)].width = 25 if nr in (2, 3, 13, 19) else 18
+        arkusz.column_dimensions[get_column_letter(nr)].width = (
+            50 if nr == 19 else 25 if nr in (2, 3, 13, 20) else 18
+        )
     arkusz.freeze_panes = "C2"
     arkusz.auto_filter.ref = arkusz.dimensions
     arkusz.sheet_view.showGridLines = False

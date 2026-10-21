@@ -87,20 +87,10 @@ label {
   gap: 27px;
 }
 .marka {
-  font-size: 28px;
-  letter-spacing: 3px;
-  font-weight: 800;
-  border: 2px solid var(--granat);
-  border-radius: 50%;
-  padding: 10px 13px;
-  line-height: 1;
-}
-.marka span {
   display: block;
-  text-align: center;
-  font-size: 8px;
-  letter-spacing: 4px;
-  margin-top: 5px;
+  width: 150px;
+  height: auto;
+  flex-shrink: 0;
 }
 .nazwa {
   font-size: 18px;
@@ -509,7 +499,7 @@ dd {
     display: none;
   }
   .marka {
-    font-size: 20px;
+    width: 120px;
   }
   .konto {
     margin-left: auto;

@@ -36,6 +36,6 @@ Odczyt QR nie zmienia przydziału, stanu, interwału, wyników ani dat metrologi
 
 ## Excel i powiadomienia
 
-Administrator wybiera Eksport wyników albo Eksport całości. Plik XLSX zawiera R&R, obrazy QR i aktywne linki. QR nie wymaga zewnętrznego serwisu generowania. Eksport nie zmienia tokenów. Po zmianie docelowej domeny IT musi ocenić trwałość już wydrukowanych kodów.
+Administrator wybiera Eksport wyników albo Eksport całości. Plik XLSX zawiera R&R, adresy z aktywnymi linkami w kolumnie S „Adres karty QR” oraz obrazy w ostatniej kolumnie T „Kod QR”. Pod obrazem nie ma tekstu. QR nie wymaga zewnętrznego serwisu generowania. Eksport nie zmienia tokenów. Po zmianie docelowej domeny IT musi ocenić trwałość już wydrukowanych kodów.
 
 Blokady terminów są wyliczane niezależnie od poczty. Po zatwierdzeniu i włączeniu przez IT moduł wysyła alerty do jakosc@aunde.pl. Awaria SMTP nie odblokowuje przyrządu. Domyślnie wysyłka pozostaje wyłączona do próby i ustalenia częstotliwości.

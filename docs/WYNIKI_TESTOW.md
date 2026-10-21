@@ -13,7 +13,7 @@ Data: 21.10.2026. Badana wersja: lokalna wersja testowa projektu, bez wdrożenia
 | Playwright Chromium | 4 scenariusze: dodanie/filtrowanie/edycja przydziału i dat/interwału/archiwizacja/przywrócenie; Viewer; zarządzanie kontami; publiczne otwarcie i ponowne otwarcie QR |
 | Widok mobilny | Obejrzano kartę przy szerokości 390 px. Nie jest to fizyczny test Android/iOS |
 | TypeScript i Vite | Kompilacja typów i produkcyjny build zakończone powodzeniem |
-| Eksport | Kolejność A-K, ostatnia kolumna Kod QR, obraz osadzony w ZIP/XLSX, działające hiperłącze, R&R w eksporcie Administratora, tekst nie staje się formułą |
+| Eksport | Kolejność A-K, adres z hiperłączem w S, obraz QR w ostatniej kolumnie T z pustą komórką pod obrazem. Test potwierdza rozdzielenie tekstu i obrazu, odczyt QR, R&R w eksporcie Administratora i ochronę przed formułami |
 | Dekodowanie QR | ZXing odczytał właściwy URL z osadzonego obrazu i z jego wariantu 160 x 160 px. Nie zastępuje to próby wydruku |
 | Import syntetyczny | Próbny i rzeczywisty zapis w izolowanej bazie, połączenie syntetycznego duplikatu z jawnej konfiguracji, B dla wszystkich, wydziały bez ulic, surowe dane zachowane, ponowny import nie nadpisuje późniejszej klasy A |
 | Import rzeczywistego źródła | Po zatwierdzeniu sześciu dezaktywacji zapis kopii do oddzielnego lokalnego PostgreSQL: 2134 przyrządy B, 2135 wierszy, 9 wydziałów, sześć Nieaktywna z n/a. Ponowny import nie tworzy duplikatów. Pobranie rejestru: 0,291 s na lokalnym komputerze. Oryginał bez zmian, dane poza repozytorium |

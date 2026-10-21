@@ -4,7 +4,7 @@ from openpyxl import load_workbook
 from backend.eksport import zbuduj_excel
 
 
-# Sprawdza obrazy osadzone w XLSX, hiperłącze, kolejność i ochronę tekstu przed formułami Excela.
+# Sprawdza oddzielenie obrazu QR od linku, dekodowanie, kolejność i ochronę tekstu przed formułami Excela.
 def test_eksportu_z_qr():
     rekord = {
         "id": "test-id",
@@ -46,4 +46,9 @@ def test_eksportu_z_qr():
     ]
     assert s["B2"].data_type == "s" and s["B2"].value == "=1+1"
     assert s["S2"].hyperlink.target == "https://qr.example.test/p/" + "x" * 43
+    assert s["S1"].value == "Adres karty QR"
+    assert s["S2"].value == s["S2"].hyperlink.target
+    assert s["T2"].value is None and s["T2"].hyperlink is None
+    assert s._images[0].anchor._from.col == 19
+    assert s._images[0].anchor._from.row == 1
     assert s["H2"].value == "Tak"

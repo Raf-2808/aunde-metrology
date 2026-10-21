@@ -42,7 +42,7 @@ Frontend widocznej karty wysyła UUID otwarcia. Backend publiczny odczytuje ogra
 
 ## Eksport
 
-Administrator wybiera wszystkie rekordy albo bieżące filtry. Backend sprawdza uprawnienia, pobiera dane i aktualne tokeny, tworzy XLSX lokalnie. W kolumnach A-K zachowuje układ źródła, na końcu osadza obraz QR i hiperłącze. Eksport nie rotuje tokenów. Tekstowe dane zaczynające się od znaku równości są zapisywane jako tekst, bez uruchamiania formuł.
+Administrator wybiera wszystkie rekordy albo bieżące filtry. Backend sprawdza uprawnienia, pobiera dane i aktualne tokeny, tworzy XLSX lokalnie. W kolumnach A-K zachowuje układ źródła. Kolumna S „Adres karty QR” zawiera tekst URL z hiperłączem. Ostatnia kolumna T „Kod QR” zawiera wyłącznie obraz, a komórka pod obrazem pozostaje pusta. Eksport nie rotuje tokenów. Tekstowe dane zaczynające się od znaku równości są zapisywane jako tekst, bez uruchamiania formuł.
 
 ## Archiwizacja i role
 
