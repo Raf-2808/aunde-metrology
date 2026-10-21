@@ -12,13 +12,19 @@ Kliknij edytowalną komórkę. Typ i Wydział mają podpowiedzi, stałe pola sł
 
 Wydział zapisuje się bez dopisku ulicy. Cutter Wersalska i Cutter Senatorska to Cutter. Wybierz nazwę z listy zamiast dopisywać lokalizację. Grupa ma początkowo B dla wszystkich. Późniejsza zmiana na A/C wymaga uzasadnienia i przełącza właściwy proces nadzoru, nie zmieniając wcześniejszych zdarzeń.
 
+## Blokada
+
+Kliknij komórkę Blokada i wybierz Odblokowany albo Zablokowany. Editor i Administrator mogą zmieniać ustawienie, Viewer tylko odczytuje. Zmiana trafia do audytu i historii. Po migracji 0004 i przy nowym imporcie aktywne otrzymują ręczne Odblokowany, pozostałe Zablokowany. Późniejsze zmiany Status Aktywna/Nieaktywna nie resetują ręcznej decyzji.
+
+Automatyczna blokada ma pierwszeństwo, gdy upłynie wymagany termin A/B albo stan techniczny to Niesprawny. Zmiana Niesprawny na Sprawny przywraca Odblokowany, jeżeli nie ma blokady ręcznej ani przekroczonego terminu. Po wykonaniu nowej czynności i przesunięciu terminu znika blokada terminu, ale zapisane ustawienie ręczne pozostaje. Termin przypadający dzisiaj jest jeszcze ważny. C nie ma blokady terminu. Stan Na stanie/Zwrócona, aktywność i nieznany/negatywny wynik nie stanowią dodatkowych automatycznych blokad. Archiwalnego rekordu nie można edytować, a jego karta jest niedostępna.
+
 ## Daty i czynności
 
 Ostatni jest datą ostatniej właściwej czynności, nie ostatniego odczytu QR. Interwał i jednostka określają Następny. Przekroczony termin blokuje użytkowanie również przy Status Aktywna. Sprawny stan techniczny nie znosi tej blokady.
 
-Aktywny przyrząd musi mieć poprawną, nieprzyszłą datę Ostatni. Brak lub przyszły Ostatni jest dopuszczalny tylko dla Nieaktywna z automatycznym komentarzem n/a. Dla nieaktywnego nie oznacza to dopuszczenia do użycia. Przyszła data Następny jest normalna.
+Aktywny przyrząd musi mieć poprawną, nieprzyszłą datę Ostatni. Brak lub przyszły Ostatni jest dopuszczalny tylko dla Nieaktywna z automatycznym komentarzem n/a. Nieaktywne mają początkowo blokadę ręczną, którą można jawnie zmienić. Przyszła data Następny jest normalna.
 
-Po wykonaniu rzeczywistego sprawdzenia lub wzorcowania użyj Zapisz czynność: wpisz rzeczywistą datę i wynik. Dla A podaj także numer świadectwa lub raportu wewnętrznego. Funkcja zapisze historię i przeliczy termin. Zwykła korekta daty nie jest pozytywnym wynikiem. Dane zaimportowane bez znanej sprawności i wyniku nie uzyskują automatycznego dopuszczenia.
+Po wykonaniu rzeczywistego sprawdzenia lub wzorcowania użyj Zapisz czynność: wpisz rzeczywistą datę i wynik. Dla A podaj także numer świadectwa lub raportu wewnętrznego. Funkcja zapisze historię i przeliczy termin. Zwykła korekta daty nie jest pozytywnym wynikiem. Stan Nieustalony i brak/negatywny wynik czynności nie tworzą automatycznej blokady.
 
 Administrator może zmienić Następny, podając uzasadnienie. Wyczyszczenie nadpisania z uzasadnieniem przywraca termin z interwału. Przy aktywnym nadpisaniu najpierw wycofaj je, zanim zmienisz interwał lub datę bazową.
 

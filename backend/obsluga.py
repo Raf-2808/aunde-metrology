@@ -190,6 +190,7 @@ def importuj_excel(
             r = max(wiersze, key=lambda x: (x["data"] or date.min, x["wiersz"]))
             p = dodaj_przyrzad(baza, numer, str(r["Typ"]), r["wydzial"], None)
             p.stan, p.status = r["Stan"], r["Status"]
+            p.odblokowany = p.status == "Aktywna"
             p.komentarz_dat = sprawdz_daty(p.status, r["data"], dzis_warszawa())
             h = baza.scalar(
                 select(Harmonogram).where(

@@ -47,6 +47,39 @@ test("Administrator dodaje, filtruje, edytuje i archiwizuje przyrząd", async ({
   await expect(
     wiersz.getByRole("button", { name: "Cutter", exact: true }),
   ).toBeVisible();
+  const blokada = wiersz.getByRole("cell").nth(14);
+  await blokada
+    .getByRole("button", { name: "Zablokowany", exact: true })
+    .click();
+  await page
+    .getByLabel("Edytuj dopuszczenie", { exact: true })
+    .selectOption("true");
+  await page.getByLabel("Edytuj dopuszczenie", { exact: true }).press("Enter");
+  await expect(blokada).toHaveText("Odblokowany");
+  await wiersz.getByRole("cell").nth(12).getByRole("button").click();
+  await page
+    .getByLabel("Edytuj stan_techniczny", { exact: true })
+    .selectOption("Niesprawny");
+  await page
+    .getByLabel("Edytuj stan_techniczny", { exact: true })
+    .press("Enter");
+  await expect(blokada).toHaveText("Zablokowany");
+  await wiersz.getByRole("cell").nth(12).getByRole("button").click();
+  await page
+    .getByLabel("Edytuj stan_techniczny", { exact: true })
+    .selectOption("Sprawny");
+  await page
+    .getByLabel("Edytuj stan_techniczny", { exact: true })
+    .press("Enter");
+  await expect(blokada).toHaveText("Odblokowany");
+  await blokada
+    .getByRole("button", { name: "Odblokowany", exact: true })
+    .click();
+  await page
+    .getByLabel("Edytuj dopuszczenie", { exact: true })
+    .selectOption("false");
+  await page.getByLabel("Edytuj dopuszczenie", { exact: true }).press("Enter");
+  await expect(blokada).toHaveText("Zablokowany");
   await wiersz.getByRole("button", { name: "Cutter", exact: true }).click();
   const pole = page.getByLabel("Edytuj wydzial", { exact: true });
   await pole.fill("Magazyn Senatorska");

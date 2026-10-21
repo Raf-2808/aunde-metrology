@@ -6,11 +6,11 @@ Data: 21.10.2026. Badana wersja: lokalna wersja testowa projektu, bez wdrożenia
 
 | Kontrola | Wynik i granice dowodu |
 |---|---|
-| pytest | 35 testów aplikacji zakończonych powodzeniem. Dodatkowo 11 testów kontroli konfiguracji wdrożenia. Reguły dat, wydziały, filtry, wersje, uprawnienia, archiwum, sesje/CSRF, konta, import, XLSX i QR |
+| pytest | 59 testów zakończonych powodzeniem, w tym blokada ręczna, granice terminów A/B/C, Niesprawny → Sprawny, niezależność od wyniku/aktywności, audyt i spójność QR z rejestrem na ograniczonej roli PostgreSQL |
 | PostgreSQL 17.11 | Rzeczywista odizolowana baza na 127.0.0.1, poza usługami firmowymi. Test równoległych edycji: jeden zapis, jeden konflikt. Publiczna rola nie czyta R&R, nie zmienia przyrządów i nie usuwa odczytów |
-| Migracje od zera | Pełen łańcuch 0001-0003 wykonano także na nowej, pustej bazie PostgreSQL. Powstało 18 tabel, wersja Alembic 0003 |
+| Migracje od zera | Pełen łańcuch 0001-0004 wykonano także na nowej, pustej bazie PostgreSQL. Powstało 18 tabel, wersja Alembic 0004. Migracja istniejących danych inicjalizuje blokadę według aktywności i zapisuje audyt |
 | Publiczne funkcje DB | Idempotencja odczytu, lista dozwolonych kluczy JSON, brak R&R także przy przekazaniu dodatkowego klucza, unieważnienie tokenu i paginowana historia |
-| Playwright Chromium | 4 scenariusze: dodanie/filtrowanie/edycja przydziału i dat/interwału/archiwizacja/przywrócenie; Viewer; zarządzanie kontami; publiczne otwarcie i ponowne otwarcie QR |
+| Playwright Chromium | 4 scenariusze: dodanie/filtrowanie/edycja przydziału i dat/interwału/archiwizacja/przywrócenie; Viewer; zarządzanie kontami; publiczne otwarcie i ponowne otwarcie QR. Scenariusz edycji obejmuje też ręczne odblokowanie/zablokowanie i automatyczną zmianę przy Niesprawny → Sprawny. Testy uruchomiono na oddzielnych portach i syntetycznej bazie |
 | Widok mobilny | Obejrzano kartę przy szerokości 390 px. Nie jest to fizyczny test Android/iOS |
 | TypeScript i Vite | Kompilacja typów i produkcyjny build zakończone powodzeniem |
 | Eksport | Kolejność A-K, adres z hiperłączem w S, obraz QR w ostatniej kolumnie T z pustą komórką pod obrazem. Test potwierdza rozdzielenie tekstu i obrazu, odczyt QR, R&R w eksporcie Administratora i ochronę przed formułami |

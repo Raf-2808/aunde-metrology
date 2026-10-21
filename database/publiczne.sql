@@ -11,7 +11,7 @@ BEGIN
   IF v_id IS NULL THEN RETURN NULL; END IF;
   SELECT jsonb_build_object(
     'numer',p.numer,'typ',t.nazwa,'stan',p.stan,'status',p.status,'wydzial',w.nazwa,
-    'klasa',p.klasa,'stan_techniczny',p.stan_techniczny,'komentarz_dat',p.komentarz_dat,
+    'odblokowany',p.odblokowany,'klasa',p.klasa,'stan_techniczny',p.stan_techniczny,'komentarz_dat',p.komentarz_dat,
     'czas_oceny',transaction_timestamp(),'wersja',p.wersja,'ostatni',h.ostatni,'interwal',coalesce(h.interwal,12),
     'jednostka',coalesce(h.jednostka,'miesiac'),'nadpisanie',h.nadpisanie,'wynik',h.wynik,
     'proces',CASE WHEN p.klasa='A' THEN 'wzorcowanie' WHEN p.klasa='B' THEN 'sprawdzenie' ELSE NULL END

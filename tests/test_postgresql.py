@@ -11,6 +11,50 @@ from sqlalchemy.exc import DBAPIError
 from backend.ewidencja import dodaj_przyrzad, zmien_przyrzad
 from backend.modele import LinkQR, Przyrzad
 
+
+# Karta publiczna stosuje tę samą blokadę ręczną i techniczną co rejestr, bez ujawniania ustawienia i R&R.
+def test_spojnosci_blokady_publicznej(polaczenia_pg):
+    from fastapi.testclient import TestClient
+    from backend.publiczne import aplikacja
+    from backend.baza import pobierz_baze
+    from backend.ewidencja import pobierz_rejestr
+
+    sesje, silnik_publiczny = polaczenia_pg
+    publiczne_sesje = sessionmaker(silnik_publiczny)
+    with sesje.begin() as baza:
+        p = dodaj_przyrzad(baza, "TEST-BLOKADA-" + str(uuid4()), "Miara", "ESD", None)
+        identyfikator = p.id
+        token = baza.scalar(select(LinkQR.token).where(LinkQR.przyrzad_id == p.id))
+
+    # Udostępnia tylko ograniczoną rolę PostgreSQL dla wywołania testowanego publicznego API.
+    def publiczna_baza():
+        with publiczne_sesje() as baza:
+            yield baza
+
+    aplikacja.dependency_overrides[pobierz_baze] = publiczna_baza
+    try:
+        with TestClient(aplikacja) as klient:
+            for wersja, zmiany, oczekiwany in (
+                (1, {"odblokowany": True}, True),
+                (2, {"stan_techniczny": "Niesprawny"}, False),
+                (3, {"stan_techniczny": "Sprawny"}, True),
+                (4, {"odblokowany": False}, False),
+            ):
+                with sesje.begin() as baza:
+                    zmien_przyrzad(baza, identyfikator, wersja, zmiany, None, "Editor")
+                    assert (
+                        pobierz_rejestr(baza, identyfikator=identyfikator)[0]["dopuszczenie"]
+                        is oczekiwany
+                    )
+                wynik = klient.post("/public/otwarcie/" + token, json={"zdarzenie": str(uuid4())})
+                assert wynik.status_code == 200
+                karta = wynik.json()["przyrzad"]
+                assert karta["dopuszczenie"] is oczekiwany
+                assert "odblokowany" not in karta and "rr" not in karta
+    finally:
+        aplikacja.dependency_overrides.clear()
+
+
 pytestmark = pytest.mark.skipif(
     not os.getenv("TEST_DATABASE_URL"), reason="Wymagany rzeczywisty PostgreSQL"
 )

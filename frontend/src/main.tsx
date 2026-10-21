@@ -41,7 +41,7 @@ const KOLUMNY: [string, string][] = [
   ["jednostka", "Jednostka"],
   ["stan_techniczny", "Stan techniczny"],
   ["metrologiczny", "Status metrologiczny"],
-  ["dopuszczenie", "Dopuszczenie"],
+  ["dopuszczenie", "Blokada"],
   ["komentarz_dat", "Komentarz"],
   ["ostatni_qr", "Ostatni odczyt QR"],
   ["liczba_qr", "Odczyty QR"],
@@ -316,8 +316,14 @@ function Komorka({
   /** Zapisuje nową wartość po Enter lub utracie fokusu i kończy edycję dopiero po sukcesie. */
   async function zatwierdz(): Promise<void> {
     if (zapis) return;
-    const nowa = pole === "interwal" ? Number(wartosc) : wartosc || null;
-    if (nowa === rekord[pole] || String(rekord[pole] ?? "") === wartosc) {
+    const nowa =
+      pole === "dopuszczenie"
+        ? wartosc === "true"
+        : pole === "interwal"
+          ? Number(wartosc)
+          : wartosc || null;
+    const biezaca = pole === "dopuszczenie" ? rekord.odblokowany : rekord[pole];
+    if (nowa === biezaca || String(biezaca ?? "") === wartosc) {
       ustawEdycje(false);
       return;
     }
@@ -335,10 +341,24 @@ function Komorka({
         className={"komorka " + (edytowalna ? "edytowalna" : "")}
         disabled={!edytowalna}
         onClick={() => {
-          ustawWartosc(String(rekord[pole] ?? ""));
+          ustawWartosc(
+            String(
+              (pole === "dopuszczenie" ? rekord.odblokowany : rekord[pole]) ??
+                "",
+            ),
+          );
           ustawEdycje(true);
         }}
-        title={edytowalna ? "Kliknij, aby edytować" : undefined}
+        title={
+          pole === "dopuszczenie" &&
+          rekord.metrologiczny === "Termin przekroczony"
+            ? "Automatyczna blokada: przekroczony termin ma pierwszeństwo przed ustawieniem ręcznym"
+            : pole === "dopuszczenie" && rekord.stan_techniczny === "Niesprawny"
+              ? "Automatyczna blokada: przyrząd niesprawny. Zmiana na Sprawny usuwa tę przyczynę blokady"
+              : edytowalna
+                ? "Kliknij, aby edytować"
+                : undefined
+        }
       >
         {pole === "dopuszczenie" ? (
           <span
@@ -375,7 +395,12 @@ function Komorka({
     },
     "aria-label": `Edytuj ${pole}`,
   };
-  return SLOWNIKI[pole] ? (
+  return pole === "dopuszczenie" ? (
+    <select {...wspolne}>
+      <option value="true">Odblokowany</option>
+      <option value="false">Zablokowany</option>
+    </select>
+  ) : SLOWNIKI[pole] ? (
     <select {...wspolne}>
       {SLOWNIKI[pole].map((v) => (
         <option key={v}>{v}</option>
@@ -452,7 +477,7 @@ function Historia({
         <div key={w.czas + i} className="wpis">
           <time>{pokazWartosc(w.czas)}</time>
           <span>{w.status}</span>
-          <strong>{w.dopuszczenie ? "Dopuszczony" : "Zablokowany"}</strong>
+          <strong>{w.dopuszczenie ? "Odblokowany" : "Zablokowany"}</strong>
         </div>
       ))}
       {dane && wpisy.length === 0 && <p>Brak wcześniejszych odczytów.</p>}
@@ -541,7 +566,7 @@ function KartaPubliczna(): React.ReactElement {
             >
               <small>DOPUSZCZENIE DO UŻYTKOWANIA</small>
               <strong>
-                {dane.przyrzad.dopuszczenie ? "Dopuszczony" : "Zablokowany"}
+                {dane.przyrzad.dopuszczenie ? "Odblokowany" : "Zablokowany"}
               </strong>
               <span>{dane.przyrzad.metrologiczny}</span>
             </div>
@@ -650,7 +675,7 @@ function Ewidencja({
       try {
         await wywolajApi("/api/przyrzady/" + r.id, "PATCH", {
           wersja: r.wersja,
-          zmiany: { [pole]: wartosc },
+          zmiany: { [pole === "dopuszczenie" ? "odblokowany" : pole]: wartosc },
           uzasadnienie,
         });
         ustawOdswiez((v) => v + 1);
@@ -757,7 +782,6 @@ function Ewidencja({
               ![
                 "numer",
                 "metrologiczny",
-                "dopuszczenie",
                 "komentarz_dat",
                 "ostatni_qr",
                 "liczba_qr",

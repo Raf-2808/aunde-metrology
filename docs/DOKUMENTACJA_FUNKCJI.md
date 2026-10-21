@@ -32,7 +32,7 @@
 
 ## Status i terminy
 
-Data bazowa, interwał i jednostka wyznaczają termin. Ręczne nadpisanie Administratora ma pierwszeństwo i wymaga uzasadnienia. Status jest oceniany na dzień Europe/Warsaw, a nie tylko przy zapisie. Po przekroczeniu terminu dopuszczenie jest fałszywe, nawet gdy Status ewidencyjny to Aktywna i stan techniczny jest Sprawny. Wynik negatywny blokuje; brak znanego pozytywnego wyniku nie daje automatycznego dopuszczenia. Pola nieznane po migracji pozostają nieznane.
+Data bazowa, interwał i jednostka wyznaczają termin. Ręczne nadpisanie Administratora ma pierwszeństwo i wymaga uzasadnienia. Status jest oceniany na dzień Europe/Warsaw, a nie tylko przy zapisie. Po przekroczeniu terminu dopuszczenie jest fałszywe, nawet gdy Status ewidencyjny to Aktywna i stan techniczny jest Sprawny. Pole przyrzady.odblokowany przechowuje ręczną decyzję. Wynik to ręczne Odblokowany AND brak przekroczenia wymaganego terminu AND stan inny niż Niesprawny. Sprawny usuwa blokadę niesprawności bez znoszenia innych przyczyn. Aktywność służy tylko inicjalizacji przy migracji/importowaniu; stan zwrotu, brak wyniku i wynik negatywny nie są automatycznymi blokadami. Nowy nieaktywny rekord ma ręczne Zablokowany. Ręczna zmiana jest wersjonowana i audytowana; backend odrzuca próbę odblokowania przy trwającej przyczynie automatycznej. Te same reguły obowiązują rejestr, eksport i QR.
 
 Zmiana interwału nie zmienia daty Ostatni. Wyliczony termin jest natychmiast inny w tabeli i karcie. Edycja daty usuwa założenie o wyniku, a zarejestrowanie rzeczywistej czynności zapisuje datę, wynik i autora w odpowiednim procesie. Skan QR nie zmienia żadnego z tych pól.
 

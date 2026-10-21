@@ -81,10 +81,9 @@ def zarejestruj_odczyt(
             termin,
             datetime.fromisoformat(surowe["czas_oceny"]).astimezone(STREFA).date(),
             surowe.get("wynik"),
+            surowe.pop("odblokowany", False),
         )
     )
-    if surowe["stan"] == "Zwrócona":
-        surowe["dopuszczenie"] = False
     surowe.pop("nadpisanie", None)
     wynik = baza.scalar(
         text("SELECT public.zapisz_odczyt(:token, :zdarzenie, CAST(:migawka AS jsonb))"),

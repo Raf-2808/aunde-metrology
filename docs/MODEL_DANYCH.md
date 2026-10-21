@@ -16,6 +16,8 @@
 | Interwał | `harmonogramy.interwal`, dodatnia liczba, jednostka osobno |
 | Następny | źródłowy `termin_zrodlowy`; bieżący termin obliczany lub jawnie nadpisany |
 
+Ręczną decyzję przechowuje przyrzady.odblokowany (BOOLEAN). Migracja 0004 jednorazowo inicjalizuje ją według aktywności i dodaje audyt dla każdego istniejącego rekordu. Nowy import używa tej samej reguły, ponowny import identycznego pliku jej nie resetuje. Efektywna blokada uwzględnia dodatkowo przekroczony termin oraz Niesprawny. Zmiana na Sprawny usuwa tylko blokadę techniczną. Publiczna funkcja przygotowująca kartę zwraca ustawienie backendowi, który stosuje tę samą ocenę; ustawienie ręczne nie jest dodawane do publicznej migawki.
+
 Pozostałe encje: `sprawdzenia`, `wzorcowania`, `linki_qr`, `odczyty_qr`, `historia_statusow`, `audyt`, `uzytkownicy`, `sesje`, `importy`, `wiersze_importu`, `powiadomienia_email`. Słowniki o stałych wartościach A/B/C oraz stanów i statusów są typowanymi polami z walidacją i ograniczeniami zamiast dodatkowych pustych tabel słownikowych. Dynamiczne nazwy typów i wydziałów są osobnymi tabelami. To doprecyzowanie modelu logicznego ETAPU 0.
 
 Harmonogram przechowuje bieżącą datę bazową oraz opcjonalne nadpisanie z uzasadnieniem. Zmiany są audytowane; rzeczywiste czynności dodają oddzielne, nieusuwane wpisy sprawdzeń lub wzorcowań. Import nie dopisuje nieznanych wyników i nie udaje historycznych czynności. Zmiana klasy tworzy/wybiera harmonogram właściwego procesu, nie kopiuje daty automatycznie pomiędzy procesami. C zachowuje historię, a bieżący status opisuje brak wymogu okresowego. Nadal obowiązuje reguła użytkownika o poprawnych datach przy aktywacji, dopóki nie zatwierdzi wyjątku dla aktywnej C.

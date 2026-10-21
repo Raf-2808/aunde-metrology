@@ -55,7 +55,7 @@ def sprawdz_daty(status: str, ostatni: date | None, dzis: date) -> str | None:
     return None
 
 
-# Zwraca metrologiczną ocenę terminu i dopuszczenie; brak klasy/daty nie jest ważnym sprawdzeniem.
+# Ocenia ręczne odblokowanie; przekroczony wymagany termin i Niesprawny wymuszają blokadę.
 def ocen_status(
     klasa: str,
     status: str,
@@ -64,25 +64,22 @@ def ocen_status(
     termin: date | None,
     dzis: date,
     wynik: str | None = None,
+    odblokowany: bool | None = None,
 ) -> dict:
     if klasa not in ("A", "B", "C"):
         return {"metrologiczny": "Brak klasyfikacji", "dopuszczenie": False}
     if klasa == "C":
         metrologiczny = "Nadzór okresowy niewymagany"
+    elif termin is not None and termin < dzis:
+        metrologiczny = "Termin przekroczony"
     elif ostatni is None or ostatni > dzis or termin is None:
         metrologiczny = "Brak danych do oceny"
-    elif wynik == "Negatywny":
-        metrologiczny = "Wynik negatywny"
-    elif termin < dzis:
-        metrologiczny = "Termin przekroczony"
     elif (termin - dzis).days <= 30:
         metrologiczny = "Termin zbliża się"
     else:
         metrologiczny = "W terminie"
-    dopuszczenie = (
-        status == "Aktywna"
-        and stan_techniczny == "Sprawny"
-        and metrologiczny in ("W terminie", "Termin zbliża się", "Nadzór okresowy niewymagany")
-        and (klasa == "C" or wynik == "Pozytywny")
-    )
+    # Aktywność ustala tylko wartość początkową. Nieznany/negatywny wynik nie tworzy dodatkowej blokady.
+    reczne = status == "Aktywna" if odblokowany is None else odblokowany
+    po_terminie = klasa != "C" and termin is not None and termin < dzis
+    dopuszczenie = bool(reczne) and not po_terminie and stan_techniczny != "Niesprawny"
     return {"metrologiczny": metrologiczny, "dopuszczenie": dopuszczenie}

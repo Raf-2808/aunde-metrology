@@ -69,6 +69,7 @@ class Przyrzad(Baza):
     klasa: Mapped[str] = mapped_column(String(1), default="B", server_default="B", index=True)
     stan: Mapped[str] = mapped_column(String(30), default="Na stanie", index=True)
     status: Mapped[str] = mapped_column(String(30), default="Nieaktywna", index=True)
+    odblokowany: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     stan_techniczny: Mapped[str] = mapped_column(String(40), default="Nieustalony")
     komentarz_dat: Mapped[str | None] = mapped_column(String(100), nullable=True)
     wersja: Mapped[int] = mapped_column(Integer, default=1)

@@ -24,9 +24,9 @@ Baza, backendy i rola migracyjna nie są wystawiane na portach hosta. Porty Ngin
 
 Kliknij nagłówek kolumny, aby wybrać wiele wartości, puste komórki, zakres lub sortowanie. Podpowiedzi obejmują rekordy ze wszystkich stron pasujące do filtrów innych kolumn. Komórki edytujesz po kliknięciu, zapis następuje po Enter lub opuszczeniu pola. Daty mają kalendarz. Konflikt wersji wymaga odświeżenia, zamiast nadpisania cudzej edycji.
 
-Nowy przyrząd ma grupę B, status Nieaktywna, stan techniczny Nieustalony i komentarz dat `n/a`. Przydziałem jest wydział bez ulicy. Nie aktywuj przyrządu bez poprawnych dat. Pozytywne dopuszczenie wymaga także sprawności i potwierdzonego wyniku właściwej czynności; sam import lub skan QR nie tworzy pozytywnego wyniku.
+Nowy przyrząd ma grupę B, status Nieaktywna, stan techniczny Nieustalony i komentarz dat `n/a`. Przydziałem jest wydział bez ulicy. Nie aktywuj przyrządu bez poprawnych dat. Nowy przyrząd ma ręczną blokadę. Import ustawia aktywnym Odblokowany, pozostałym Zablokowany. Kliknięcie komórki Blokada pozwala Editorowi i Administratorowi zmienić to ustawienie. Pozytywny wynik czynności nie jest warunkiem odblokowania.
 
-Grupa A wybiera wzorcowanie, B sprawdzenie, C brak obowiązkowego procesu okresowego. Zmiana grupy wymaga uzasadnienia i zachowuje historię. Przekroczony wymagany termin blokuje użytkowanie niezależnie od ręcznego Status. Wynik negatywny również blokuje. Korekta daty nie zastępuje rejestracji rzeczywistej czynności.
+Grupa A wybiera wzorcowanie, B sprawdzenie, C brak obowiązkowego procesu okresowego. Zmiana grupy wymaga uzasadnienia i zachowuje historię. Przekroczony wymagany termin blokuje użytkowanie niezależnie od ręcznego Status. Automatycznie blokuje także stan Niesprawny. Zmiana na Sprawny usuwa tę przyczynę, ale nie znosi przekroczonego terminu ani blokady ręcznej. Nieustalony stan i brak/negatywny wynik nie blokują automatycznie. Korekta daty nie zastępuje rejestracji rzeczywistej czynności.
 
 Administrator dodaje przyrządy i konta, eksportuje R&R, archiwizuje/przywraca, nadpisuje termin z uzasadnieniem i rotuje token QR. Editor edytuje pola biznesowe i rejestruje czynności, Viewer przegląda i filtruje. Publiczna karta nie ma przycisków edycji ani potwierdzania sprawdzenia.
 

@@ -53,7 +53,7 @@ export function pokazWartosc(wartosc: Wartosc | undefined): string {
   if (wartosc === null || wartosc === undefined || wartosc === "")
     return "Brak";
   if (typeof wartosc === "boolean")
-    return wartosc ? "Dopuszczony" : "Zablokowany";
+    return wartosc ? "Odblokowany" : "Zablokowany";
   if (typeof wartosc === "string" && /^\d{4}-\d{2}-\d{2}T/.test(wartosc))
     return new Intl.DateTimeFormat("pl-PL", {
       dateStyle: "short",

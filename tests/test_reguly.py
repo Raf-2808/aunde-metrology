@@ -68,7 +68,7 @@ def test_blokady_po_terminie():
     assert wynik == {"metrologiczny": "Termin przekroczony", "dopuszczenie": False}
 
 
-# Termin przypadający dziś jest jeszcze ważny, ale nieznany wynik nie daje automatycznego dopuszczenia.
+# Termin przypadający dziś jest ważny; brak wyniku nie wymusza dodatkowej blokady.
 def test_granicy_dnia_i_wyniku():
     assert ocen_status(
         "B",
@@ -79,7 +79,7 @@ def test_granicy_dnia_i_wyniku():
         date(2026, 1, 1),
         "Pozytywny",
     )["dopuszczenie"]
-    assert not ocen_status(
+    assert ocen_status(
         "B", "Aktywna", "Sprawny", date(2025, 1, 1), date(2026, 1, 1), date(2026, 1, 1)
     )["dopuszczenie"]
 

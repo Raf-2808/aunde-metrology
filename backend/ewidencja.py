@@ -70,8 +70,9 @@ def opisz_przyrzad(
         nastepny,
         dzis_warszawa(),
         h.wynik if h else None,
+        p.odblokowany,
     )
-    if p.stan == "Zwrócona" or p.usunieto_at:
+    if p.usunieto_at:
         ocena["dopuszczenie"] = False
     return {
         "id": p.id,
@@ -80,6 +81,7 @@ def opisz_przyrzad(
         "wydzial": wydzial,
         "stan": p.stan,
         "status": p.status,
+        "odblokowany": p.odblokowany,
         "klasa": p.klasa,
         "stan_techniczny": p.stan_techniczny,
         "komentarz_dat": p.komentarz_dat,
@@ -245,6 +247,7 @@ def zmien_przyrzad(
         "wydzial",
         "klasa",
         "stan_techniczny",
+        "odblokowany",
         "ostatni",
         "interwal",
         "jednostka",
@@ -266,6 +269,7 @@ def zmien_przyrzad(
         "stan": p.stan,
         "klasa": p.klasa,
         "stan_techniczny": p.stan_techniczny,
+        "odblokowany": p.odblokowany,
     }
     for pole, wartosci in (
         ("status", {"Aktywna", "Nieaktywna"}),
@@ -332,10 +336,27 @@ def zmien_przyrzad(
         if not isinstance(zmiany["usuniety"], bool):
             raise ValueError("Nieprawidłowa operacja archiwizacji")
         p.usunieto_at = teraz_utc() if zmiany["usuniety"] else None
+    if "odblokowany" in zmiany:
+        if not isinstance(zmiany["odblokowany"], bool):
+            raise ValueError("Wybierz Odblokowany albo Zablokowany")
+        termin = h.nadpisanie or (
+            oblicz_termin(h.ostatni, h.interwal, h.jednostka) if h.ostatni else None
+        )
+        if zmiany["odblokowany"] and p.klasa != "C" and termin and termin < dzis_warszawa():
+            raise ValueError(
+                "Termin został przekroczony. Zarejestruj aktualną czynność przed odblokowaniem"
+            )
+        if zmiany["odblokowany"] and p.stan_techniczny == "Niesprawny":
+            raise ValueError(
+                "Przyrząd niesprawny jest zablokowany. Zmień stan techniczny po usunięciu niesprawności"
+            )
+        p.odblokowany = zmiany["odblokowany"]
     for pole, wartosc in przed.items():
         if getattr(p, pole) != wartosc:
             baza.add(
-                HistoriaStatusu(przyrzad_id=p.id, pole=pole, przed=wartosc, po=getattr(p, pole))
+                HistoriaStatusu(
+                    przyrzad_id=p.id, pole=pole, przed=str(wartosc), po=str(getattr(p, pole))
+                )
             )
     p.wersja += 1
     baza.add(

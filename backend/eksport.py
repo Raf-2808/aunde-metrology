@@ -21,7 +21,7 @@ KOLUMNY = [
     ("Następny", "nastepny"),
     ("Stan techniczny", "stan_techniczny"),
     ("Status metrologiczny", "metrologiczny"),
-    ("Dopuszczenie", "dopuszczenie"),
+    ("Blokada", "dopuszczenie"),
     ("Jednostka interwału", "jednostka"),
     ("Komentarz do dat", "komentarz_dat"),
     ("Ostatni odczyt QR", "ostatni_qr"),
@@ -42,6 +42,8 @@ def zbuduj_excel(rekordy: list[dict], tokeny: dict[str, str], adres: str) -> byt
         wartosci = []
         for nazwa, pole in KOLUMNY:
             wartosc = rekord.get(pole) if pole else lp if nazwa == "Lp" else ""
+            if pole == "dopuszczenie" and isinstance(wartosc, bool):
+                wartosc = "Odblokowany" if wartosc else "Zablokowany"
             if pole in ("ostatni", "nastepny") and wartosc:
                 wartosc = date.fromisoformat(wartosc)
             wartosci.append(wartosc)
