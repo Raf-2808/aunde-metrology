@@ -13,6 +13,7 @@ Stan lokalny: 22.10.2026. Wyniki poniżej dotyczą faktycznie wykonanych polece�
 - Eksport: odczyt wygenerowanych XLSX przez openpyxl potwierdził wartości, czerwone wypełnienia i brak dopisku NOK do wartości pomiarów.
 - Przeglądarka lokalna: logowanie, widok kolejki, uruchomienie formularza, nieaktywny zapis przy brakach, czerwony pojedynczy pomiar ze zgodną średnią, wymagane potwierdzenie, zatwierdzony zapis, status partii ZBADANE oraz odblokowanie wyników rzeczywistych hasłem. Wizualnie sprawdzono kolejkę i formularz przy szerokości 1600 px.
 - GitHub Actions dla commitu `581b1157b6a27a64838ee02f7d7e91d4eb5876c3`: zadania backend i frontend zakończyły się sukcesem. Obejmuje to migrację i 26 testów na PostgreSQL, w tym równoległy zapis, oraz Playwright. [Wynik CI](https://github.com/Raf-2808/aunde-metrology/actions/runs/39758295084).
+- GitHub Actions dla commitu `536a6dfcee037b55f10c09308e58f1927952c1af`: wszystkie trzy zadania zakończyły się sukcesem, w tym budowa i uruchomienie pełnego Docker Compose na Linux, zaufane HTTPS przez CA Caddy, healthcheck API i utworzenie pliku backupu. [Wynik Compose i testów](https://github.com/Raf-2808/aunde-metrology/actions/runs/39758677856).
 
 ## Mapowanie etapów
 
@@ -27,13 +28,13 @@ Stan lokalny: 22.10.2026. Wyniki poniżej dotyczą faktycznie wykonanych polece�
 | 7. Symulacja | Test przekształcenia pojedynczych pomiarów, średniej i braku zmiany źródła |
 | 8. SPC i SMTP | Test współczynników, I-MR, alarmu, outbox i deduplikacji; bez faktycznej wysyłki |
 | 9. Bezpieczeństwo i eksport | Role, osobne scopes, expiry, CSRF, Origin i odczyt eksportu XLSX |
-| 10. Wdrożenie | Pliki Compose/Docker/CI i instrukcje; uruchomienie docelowe jeszcze niezweryfikowane |
+| 10. Wdrożenie | Pełny Compose, HTTPS/API i utworzenie backupu przeszły CI na Linux; pozostaje firmowa VM i restore |
 
 Testy etapów 2..9 uruchomiono łącznie po implementacji. Nie deklarujemy osobnego pełnego odbioru na końcu każdego etapu historycznego.
 
 ## Pozostały odbiór techniczny
 
-1. Odbiór Compose na docelowej firmowej VM. PostgreSQL i współbieżność przeszły CI; dodano także osobne zadanie CI budujące i uruchamiające pełny Compose. Wynik tego dodatkowego zadania należy sprawdzić w aktualnym PR. Lokalnie Docker nie był dostępny.
+1. Odbiór Compose na docelowej firmowej VM. PostgreSQL, współbieżność oraz budowa i uruchomienie pełnego Compose przeszły CI na Linux. Lokalnie Docker nie był dostępny.
 2. DNS, certyfikat firmowy/CA Caddy, reguły proxy i kontrola dostępu sieciowego.
 3. Test firmowego SMTP, rejestr Message-ID, odbiorcy oraz procedura obsługi UNCERTAIN/SENDING. Niczego nie wysyłano.
 4. Faktyczny backup i próbny restore na oddzielnej VM. Skrypt i instrukcja nie są dowodem udanego odtworzenia.
