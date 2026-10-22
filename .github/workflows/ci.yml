@@ -38,3 +38,28 @@ jobs:
       - run: pnpm test && pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure isolated Compose environment
+        run: |
+          cp .env.example .env
+          sed -i 's/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=ci_only_isolated_database/' .env
+          sed -i 's|^PUBLIC_URL=.*|PUBLIC_URL=https://localhost|' .env
+          sed -i 's/^SITE_ADDRESS=.*/SITE_ADDRESS=localhost/' .env
+          docker compose config --quiet
+      - name: Build and start all services
+        run: docker compose up -d --build --wait --wait-timeout 180
+      - name: Verify HTTPS, API and backup
+        run: |
+          docker compose cp proxy:/data/caddy/pki/authorities/local/root.crt ./ci-root.crt
+          curl --fail --cacert ./ci-root.crt https://localhost/api/health
+          curl --fail --cacert ./ci-root.crt https://localhost/
+          docker compose exec -T backup sh -c 'ls /backups/*.dump'
+      - name: Collect service logs
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Tear down isolated services
+        if: always()
+        run: docker compose down -v

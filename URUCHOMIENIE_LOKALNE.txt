@@ -1,0 +1,17 @@
+AUNDE LIMS - uruchomienie lokalne
+
+1. Otwórz PowerShell w rozpakowanym folderze aunde-lims.
+2. Uruchom: .\Start-Lokalnie.ps1
+3. Przy pierwszym uruchomieniu wpisz własne hasło administratora (co najmniej 12 znaków).
+4. Otwórz http://127.0.0.1:8080 i zaloguj się jako admin.
+5. Dodaj normy i artykuł albo przejrzyj prywatny katalog przed jego zaimportowaniem.
+6. Ctrl+C w terminalu zatrzymuje lokalne serwery. Dane pozostają w .local/lims.db.
+
+Skrypt pobiera zależności z oficjalnych rejestrów PyPI i npm. Potrzebny jest dostęp do internetu.
+Wersja lokalna SQLite jest przeznaczona dla jednego operatora. Dla firmowej pracy wielostanowiskowej uruchom Docker Compose z PostgreSQL zgodnie z DEPLOYMENT.md.
+
+private/ zawiera wyłącznie lokalną analizę poufnego skoroszytu. Nie publikuj tego folderu.
+Nie zmieniono oryginalnego pliku XLSM.
+
+PR do przeglądu: https://github.com/Raf-2808/aunde-metrology/pull/2
+Pełny zakres testów i pozostałe elementy odbioru opisano w VALIDATION.md.

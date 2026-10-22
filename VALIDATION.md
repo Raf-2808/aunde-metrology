@@ -12,6 +12,7 @@ Stan lokalny: 22.10.2026. Wyniki poniżej dotyczą faktycznie wykonanych polece�
 - API: testy wszystkich 13 grup kryteriów akceptacyjnych, rozszerzone o stare plany, niezmienność konfiguracji, korekty, CSRF, Origin i wygasanie scope.
 - Eksport: odczyt wygenerowanych XLSX przez openpyxl potwierdził wartości, czerwone wypełnienia i brak dopisku NOK do wartości pomiarów.
 - Przeglądarka lokalna: logowanie, widok kolejki, uruchomienie formularza, nieaktywny zapis przy brakach, czerwony pojedynczy pomiar ze zgodną średnią, wymagane potwierdzenie, zatwierdzony zapis, status partii ZBADANE oraz odblokowanie wyników rzeczywistych hasłem. Wizualnie sprawdzono kolejkę i formularz przy szerokości 1600 px.
+- GitHub Actions dla commitu `581b1157b6a27a64838ee02f7d7e91d4eb5876c3`: zadania backend i frontend zakończyły się sukcesem. Obejmuje to migrację i 26 testów na PostgreSQL, w tym równoległy zapis, oraz Playwright. [Wynik CI](https://github.com/Raf-2808/aunde-metrology/actions/runs/39758295084).
 
 ## Mapowanie etapów
 
@@ -32,7 +33,7 @@ Testy etapów 2..9 uruchomiono łącznie po implementacji. Nie deklarujemy osobn
 
 ## Pozostały odbiór techniczny
 
-1. Uruchomienie Compose na Linux, budowa obrazów, healthcheck i test PostgreSQL, w tym prawdziwa współbieżność. Lokalnie Docker nie był dostępny.
+1. Odbiór Compose na docelowej firmowej VM. PostgreSQL i współbieżność przeszły CI; dodano także osobne zadanie CI budujące i uruchamiające pełny Compose. Wynik tego dodatkowego zadania należy sprawdzić w aktualnym PR. Lokalnie Docker nie był dostępny.
 2. DNS, certyfikat firmowy/CA Caddy, reguły proxy i kontrola dostępu sieciowego.
 3. Test firmowego SMTP, rejestr Message-ID, odbiorcy oraz procedura obsługi UNCERTAIN/SENDING. Niczego nie wysyłano.
 4. Faktyczny backup i próbny restore na oddzielnej VM. Skrypt i instrukcja nie są dowodem udanego odtworzenia.
