@@ -1,0 +1,89 @@
+name: ${COMPOSE_PROJECT_NAME:-aunde-metrology-dev}
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: infra/backend.Dockerfile
+  restart: unless-stopped
+  networks: [wewnetrzna]
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+services:
+  baza:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: metrologia
+      POSTGRES_USER: metrologia_owner
+      POSTGRES_PASSWORD: ${OWNER_DB_PASSWORD:?Ustaw OWNER_DB_PASSWORD}
+    volumes: [dane-bazy:/var/lib/postgresql/data]
+    networks: [wewnetrzna]
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U metrologia_owner -d metrologia']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  migracje:
+    <<: *backend
+    restart: 'no'
+    environment:
+      DATABASE_URL: postgresql+psycopg://metrologia_owner:${OWNER_DB_PASSWORD}@baza:5432/metrologia
+      ADMIN_DB_PASSWORD: ${ADMIN_DB_PASSWORD:?Ustaw ADMIN_DB_PASSWORD}
+      PUBLIC_DB_PASSWORD: ${PUBLIC_DB_PASSWORD:?Ustaw PUBLIC_DB_PASSWORD}
+    command: [sh, -c, 'alembic upgrade head && python -m backend.obsluga uprawnienia']
+    depends_on:
+      baza: {condition: service_healthy}
+  api:
+    <<: *backend
+    environment: &admin-env
+      DATABASE_URL: postgresql+psycopg://metrologia_admin:${ADMIN_DB_PASSWORD}@baza:5432/metrologia
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?Ustaw PUBLIC_BASE_URL}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    command: [uvicorn, backend.api:aplikacja, --host, 0.0.0.0, --port, '8000', --no-access-log]
+    depends_on:
+      migracje: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/health")']
+      interval: 20s
+      timeout: 5s
+      retries: 5
+  publiczne:
+    <<: *backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://metrologia_public:${PUBLIC_DB_PASSWORD}@baza:5432/metrologia
+    command: [uvicorn, backend.publiczne:aplikacja, --host, 0.0.0.0, --port, '8001', --no-access-log]
+    depends_on:
+      migracje: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8001/health")']
+      interval: 20s
+      timeout: 5s
+      retries: 5
+  powiadomienia:
+    <<: *backend
+    environment:
+      <<: *admin-env
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    command: [sh, -c, 'while true; do python -m backend.obsluga powiadomienia; sleep 60; done']
+    depends_on:
+      migracje: {condition: service_completed_successfully}
+  www:
+    build:
+      context: .
+      dockerfile: infra/frontend.Dockerfile
+    ports:
+      - '127.0.0.1:${ADMIN_HTTP_PORT:-8080}:8080'
+      - '127.0.0.1:${PUBLIC_HTTP_PORT:-8081}:8081'
+    networks: [wewnetrzna]
+    restart: unless-stopped
+    depends_on:
+      api: {condition: service_healthy}
+      publiczne: {condition: service_healthy}
+volumes:
+  dane-bazy:
+networks:
+  wewnetrzna:
