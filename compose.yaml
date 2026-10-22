@@ -1,0 +1,91 @@
+name: aunde-lims
+x-backend: &backend
+  build: ./backend
+  environment: &environment
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    PUBLIC_URL: ${PUBLIC_URL}
+    ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+    COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    SMTP_ENABLED: ${SMTP_ENABLED:-false}
+    SMTP_ATTACH_CHART: ${SMTP_ATTACH_CHART:-false}
+    SMTP_HOST: ${SMTP_HOST:-}
+    SMTP_PORT: ${SMTP_PORT:-587}
+    SMTP_FROM: ${SMTP_FROM:-}
+    SMTP_USER: ${SMTP_USER:-}
+    SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    MAIL_ID_DOMAIN: ${MAIL_ID_DOMAIN:-lims.internal}
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Ustaw haslo w .env}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    <<: *backend
+    command: [alembic, upgrade, head]
+    restart: 'no'
+    depends_on:
+      db: {condition: service_healthy}
+  backend:
+    <<: *backend
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/api/health")']
+      interval: 20s
+      timeout: 5s
+      retries: 5
+  worker:
+    <<: *backend
+    command: [python, -m, app.worker]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, 'from app.models import engine; from sqlalchemy import text; engine.connect().execute(text("SELECT 1"))']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, wget, -q, --spider, http://127.0.0.1/]
+      interval: 20s
+      timeout: 3s
+      retries: 5
+  proxy:
+    image: caddy:2-alpine
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS}
+    ports: ['443:443', '80:80']
+    volumes: ['./deploy/Caddyfile:/etc/caddy/Caddyfile:ro', 'caddy_data:/data', 'caddy_config:/config']
+    depends_on:
+      backend: {condition: service_healthy}
+      frontend: {condition: service_healthy}
+    restart: unless-stopped
+  backup:
+    image: postgres:17-alpine
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+    volumes: ['./backups:/backups','./deploy/backup.sh:/backup.sh:ro']
+    entrypoint: [sh, /backup.sh]
+    depends_on:
+      db: {condition: service_healthy}
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
