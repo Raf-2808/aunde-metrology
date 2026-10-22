@@ -27,7 +27,7 @@ test("Administrator dodaje, filtruje, edytuje i archiwizuje przyrząd", async ({
   await page.getByLabel("Numer", { exact: true }).fill(numer);
   await page.getByLabel("Typ", { exact: true }).fill("Miara testowa");
   await page
-    .getByLabel("Wydział bez ulicy", { exact: true })
+    .getByLabel("Wydział", { exact: true })
     .fill("Cutter Wersalska");
   await page.getByRole("button", { name: "Zapisz", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);

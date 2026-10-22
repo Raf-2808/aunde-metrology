@@ -1044,7 +1044,7 @@ function Ewidencja({
                   <input name="typ" required maxLength={150} />
                 </label>
                 <label>
-                  Wydział bez ulicy
+                  Wydział
                   <input name="wydzial" required maxLength={150} />
                 </label>
                 <p>
