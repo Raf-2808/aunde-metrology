@@ -1,0 +1,16 @@
+.env
+node_modules/
+dist/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.db
+*.xlsm
+*.xlsx
+private/
+backups/
+test-results/
+playwright-report/
+.local/
+*.tsbuildinfo
+

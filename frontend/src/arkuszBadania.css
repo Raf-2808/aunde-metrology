@@ -1,0 +1,195 @@
+.test-sheet {
+  --test-border: #8796a2;
+  border: 1px solid var(--test-border);
+  background: #fff;
+  color: #142c43;
+  font:
+    13px Arial,
+    sans-serif;
+}
+.test-report-title {
+  display: grid;
+  grid-template-columns: 130px 1fr 130px;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--test-border);
+}
+.test-report-title img {
+  width: 118px;
+  height: auto;
+}
+.test-report-title h2 {
+  text-align: center;
+  font:
+    bold 16px Arial,
+    sans-serif;
+}
+.test-report-title > span {
+  text-align: right;
+  font-size: 11px;
+}
+.test-metadata,
+.test-signoff-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.test-field {
+  display: grid;
+  grid-template-columns: minmax(125px, 37%) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  min-height: 40px;
+  border-bottom: 1px solid var(--test-border);
+  font-size: inherit;
+}
+.test-metadata > div:first-child,
+.test-signoff-grid > .test-field:nth-child(odd) {
+  border-right: 1px solid var(--test-border);
+}
+.test-field > span {
+  padding: 6px 9px;
+  border-right: 1px solid var(--test-border);
+  background: #f5f7f8;
+}
+.test-field > output {
+  padding: 9px;
+  align-self: center;
+  overflow-wrap: anywhere;
+}
+.test-field input,
+.test-field textarea,
+.test-point input,
+.test-point select {
+  border-radius: 0;
+  min-height: 36px;
+  padding: 6px 8px;
+}
+.test-field input,
+.test-field textarea {
+  border: 0;
+}
+.test-sheet small {
+  line-height: 1.25;
+}
+.test-table-scroll {
+  overflow-x: auto;
+}
+.test-table {
+  min-width: 850px;
+  table-layout: fixed;
+}
+.test-product-col {
+  width: 13%;
+}
+.test-method-col {
+  width: 19%;
+}
+.test-standard-col,
+.test-limit-col {
+  width: 10%;
+}
+.test-unit-col {
+  width: 7%;
+}
+.test-points-col {
+  width: 9%;
+}
+.test-average-col,
+.test-result-col {
+  width: 7%;
+}
+.test-table th,
+.test-table td {
+  position: static;
+  z-index: auto;
+  border: 1px solid var(--test-border);
+  padding: 7px;
+  vertical-align: middle;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  color: inherit;
+  background: #fff;
+}
+.test-table thead th,
+.test-table td {
+  text-align: center;
+}
+.test-table thead th {
+  background: #f1f4f7;
+  font-size: 11px;
+}
+.test-table tbody th {
+  text-align: left;
+  font-size: 12px;
+}
+.test-table .test-product {
+  text-align: left;
+  font-weight: bold;
+  background: #f5f7f8;
+}
+.test-table .test-entry,
+.test-table .test-assessment {
+  background: #e2f3ff;
+}
+.test-table .test-ok {
+  background: #e5f2ea;
+  color: #225d3c;
+}
+.test-table .test-nok {
+  background: #fce5e6;
+  color: #9b252f;
+}
+.test-table .test-average,
+.test-table .test-assessment {
+  font-weight: bold;
+}
+.test-point {
+  display: block;
+  font-size: 11px;
+  min-width: 0;
+}
+.test-point span {
+  display: block;
+  margin-bottom: 3px;
+}
+.test-point input,
+.test-point select {
+  background: #f8fcff;
+  text-align: center;
+}
+.test-extra-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.test-signoff > .test-field {
+  grid-template-columns: minmax(125px, 18.5%) minmax(0, 1fr);
+}
+.test-actions {
+  padding: 16px 0;
+}
+.test-order-picker {
+  max-width: 33rem;
+  margin: 16px auto 0;
+  text-align: left;
+}
+
+@media (max-width: 680px) {
+  .test-report-title {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+  .test-report-title h2,
+  .test-report-title > span {
+    text-align: left;
+  }
+  .test-metadata,
+  .test-signoff-grid {
+    grid-template-columns: 1fr;
+  }
+  .test-metadata > div:first-child,
+  .test-signoff-grid > .test-field:nth-child(odd) {
+    border-right: 0;
+  }
+}
