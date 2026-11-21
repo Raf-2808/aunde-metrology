@@ -67,3 +67,9 @@ Testy etapów 2..9 uruchomiono łącznie po implementacji. Nie deklarujemy osobn
 - Audit jest append-only przez API, bez zewnętrznego niezmiennego magazynu. SMTP nie potwierdza doręczenia do skrzynki. Awaria transmisji wymaga ręcznej obsługi.
 
 Te elementy oraz odbiór na firmowej infrastrukturze oznaczają, że dostarczony kod nie jest jeszcze kompletnie odebraną aplikacją produkcyjną spełniającą każdy punkt specyfikacji.
+
+## Formularz nowego badania (2026-11-21)
+
+- Wzorzec układu: zakładka TEST. Metrykę partii, tabelę pomiarów i stopkę badania powiązano z istniejącym planem oraz polami sesji. Logo AUNDE na tym ekranie jest statyczne.
+- Lokalny podgląd: wybór zlecenia demo, pola dla jednego, trzech i dziesięciu punktów, próbny wpis z przecinkiem dziesiętnym i kontrola statycznego logo. Sesji demo nie zapisywano.
+- Weryfikacja frontendu: trzy testy Vitest, kompilacja TypeScript i budowa produkcyjna Vite przeszły.

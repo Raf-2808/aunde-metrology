@@ -1,5 +1,6 @@
 // Napis pozostaje nieruchomy, a południki globusa obracają się w jego obrysie.
-export function LogoAunde() {
+export function LogoAunde({ staticLogo = false }: { staticLogo?: boolean }) {
+  if (staticLogo) return <img className="brand-logo" src="/branding/aunde.png" alt="AUNDE" />;
   return (
     <div className="brand-logo" role="img" aria-label="AUNDE">
       <img className="brand-wordmark" src="/branding/aunde.png" alt="" aria-hidden="true" />

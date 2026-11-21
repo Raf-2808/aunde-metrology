@@ -6,6 +6,7 @@ import { Spec, Article, Order, Plan, LabResult, User, Method, inSpec, complete }
 import { LogoAunde } from './LogoAunde';
 import { IkonaNawigacji } from './IkonaNawigacji';
 import './style.css';
+import { ArkuszBadania } from './ArkuszBadania';
 
 const statuses: Record<string, string> = {
   WAITING: 'Oczekuje na badanie',
@@ -23,7 +24,6 @@ const pages: Record<string, string> = {
   articles: 'Artykuły i metody',
   admin: 'Administracja',
 };
-const localDate = () => new Intl.DateTimeFormat('sv-SE').format(new Date());
 const fmt = (v: string | null, d = 2) =>
   v === null
     ? 'Brak średniej'
@@ -381,7 +381,7 @@ function App() {
       <section className="workspace">
         <header className="topbar">
           <div className="logo">
-            <LogoAunde />
+            <LogoAunde staticLogo={page === 'test'} />
             <span>LIMS / Laboratorium</span>
           </div>
           <div className="top-actions">
@@ -627,161 +627,50 @@ function App() {
               <section className="panel empty">
                 <h2>Wybierz lotto z kolejki</h2>
                 <p>Zakres badań i cykl wynikają z konfiguracji artykułu.</p>
+                <label className="test-order-picker">
+                  Lotto do badania
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      const order = orders.find((item) => item.id === Number(e.target.value));
+                      if (order) void run(() => begin(order));
+                    }}
+                  >
+                    <option value="" disabled>
+                      Wybierz lotto
+                    </option>
+                    {orders
+                      .filter((order) => ['WAITING', 'IN_PROGRESS'].includes(order.status))
+                      .map((order) => (
+                        <option key={order.id} value={order.id}>
+                          {order.lot} · {order.article}
+                          {order.roll ? ` · bela ${order.roll}` : ''}
+                        </option>
+                      ))}
+                  </select>
+                </label>
                 <button onClick={() => setPage('orders')}>Przejdź do zleceń</button>
               </section>
             ) : (
-              <form onSubmit={save}>
-                <section className="panel">
-                  <div className="panelbar">
-                    <h2>
-                      {plan.code} · {plan.article}
-                    </h2>
-                    <span className="badge IN_PROGRESS">
-                      Cykl {plan.cycle} · Wersja {plan.version}
-                    </span>
-                  </div>
-                  <div className="inlineform">
-                    <label>
-                      Lotto
-                      <input value={selectedOrder!.lot} readOnly />
-                    </label>
-                    <label>
-                      Bela
-                      <input value={selectedOrder!.roll} readOnly />
-                    </label>
-                    <label>
-                      Data badania
-                      <input type="date" name="test_date" required defaultValue={localDate()} />
-                    </label>
-                    <label>
-                      Operator
-                      <input value={user.login} readOnly />
-                    </label>
-                    <label>
-                      Numer WZ
-                      <input name="delivery_note" />
-                    </label>
-                    <label>
-                      Poziom produkcji
-                      <input name="production_level" />
-                    </label>
-                    <label>
-                      Urządzenie
-                      <input name="device" maxLength={250} />
-                    </label>
-                    <label>
-                      Rozpoczęcie badania
-                      <input name="started_on" type="date" />
-                    </label>
-                    <label>
-                      Zakończenie badania
-                      <input name="ended_on" type="date" />
-                    </label>
-                  </div>
-                </section>
-                <div className="panel">
-                  <div className="panelbar">
-                    <h2>{correction ? `Korekta sesji #${correction.id}` : 'Wyniki pomiarów'}</h2>
-                    <small>Niebieskie pola: pomiary · Białe pola: konfiguracja</small>
-                  </div>
-                  {plan.specs.map((s) => {
-                    const v = values[s.key] || [],
-                      filled = v.length === s.count && v.every((x) => x !== ''),
-                      avg =
-                        s.kind === 'numeric' && filled
-                          ? v.reduce((a, b) => a + Number(b.replace(',', '.')), 0) / s.count
-                          : null,
-                      ok =
-                        filled &&
-                        (s.kind === 'numeric'
-                          ? inSpec(avg!, s)
-                          : v.every((x) => s.passing.includes(x)));
-                    return (
-                      <div className="measurement" key={s.key}>
-                        <div className="spec">
-                          <strong>{s.name}</strong>
-                          <small>
-                            {s.method} · {tolerance(s)}
-                          </small>
-                          <small>
-                            {s.frequency === 'nth'
-                              ? `Co ${s.every_n}. badanie`
-                              : 'Badanie wymagane'}
-                          </small>
-                        </div>
-                        <div className="points">
-                          {s.labels.map((label, i) => {
-                            const bad =
-                              v[i] !== '' &&
-                              (s.kind === 'numeric'
-                                ? !inSpec(Number(v[i]?.replace(',', '.')), s)
-                                : !s.passing.includes(v[i]));
-                            return (
-                              <label key={i}>
-                                {label}
-                                {s.kind === 'numeric' ? (
-                                  <input
-                                    aria-label={`${s.name} ${label}`}
-                                    className={'resultinput ' + (bad ? 'outside' : '')}
-                                    inputMode="decimal"
-                                    required
-                                    value={v[i] || ''}
-                                    onChange={(e) => {
-                                      const vv = [...v];
-                                      vv[i] = e.target.value;
-                                      setValues({ ...values, [s.key]: vv });
-                                      setAck(false);
-                                    }}
-                                  />
-                                ) : (
-                                  <select
-                                    aria-label={`${s.name} ${label}`}
-                                    className={'resultinput ' + (bad ? 'outside' : '')}
-                                    required
-                                    value={v[i] || ''}
-                                    onChange={(e) => {
-                                      const vv = [...v];
-                                      vv[i] = e.target.value;
-                                      setValues({ ...values, [s.key]: vv });
-                                      setAck(false);
-                                    }}
-                                  >
-                                    <option value="">Wybierz</option>
-                                    {s.allowed.map((x) => (
-                                      <option key={x}>{x}</option>
-                                    ))}
-                                  </select>
-                                )}
-                              </label>
-                            );
-                          })}
-                        </div>
-                        <div className={'average ' + (filled && !ok ? 'outside' : '')}>
-                          <small>{s.kind === 'numeric' ? 'Średnia' : 'Ocena'}</small>
-                          <strong>
-                            {filled
-                              ? s.kind === 'numeric'
-                                ? fmt(String(avg), s.decimals)
-                                : ok
-                                  ? 'OK'
-                                  : 'NOK'
-                              : 'Brak wyników'}
-                          </strong>
-                          {filled && (
-                            <span className={'badge ' + (ok ? 'TESTED' : 'HELD')}>
-                              {ok ? 'OK' : 'NOK'}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <section className="panel inlineform">
-                  <label>
-                    Uwagi
-                    <textarea name="notes" maxLength={4000} />
-                  </label>
+              <form
+                key={correction?.id ? `correction-${correction.id}` : selectedOrder!.id}
+                onSubmit={save}
+              >
+                <ArkuszBadania
+                  plan={plan}
+                  order={selectedOrder!}
+                  operator={user.login}
+                  values={values}
+                  correctionId={correction?.id}
+                  onValue={(key, index, value) => {
+                    setValues((current) => ({
+                      ...current,
+                      [key]: current[key].map((point, i) => (i === index ? value : point)),
+                    }));
+                    setAck(false);
+                  }}
+                />
+                <section className="test-actions">
                   {warning && (
                     <label className="warning">
                       <input
