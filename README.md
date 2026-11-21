@@ -24,6 +24,8 @@ Pełny test PostgreSQL: ustaw `TEST_DATABASE_URL` na oddzielną bazę testową i
 
 ## Dokumentacja
 
+Warstwa wizualna LIMS jest zgodna z aplikacją AUNDE Q006 do kontroli końcowej rolek: wspólne logo z animowanymi południkami globusa, biały nagłówek, granatowa nawigacja i zwijany pasek boczny. Stan zwinięcia jest zapamiętywany osobno dla LIMS. Przy ograniczeniu animacji w systemie globus pozostaje nieruchomy.
+
 - `EXCEL_ANALYSIS.md`: mapowanie arkuszy i rozbieżności, bez ujawniania danych firmowych.
 - `ARCHITECTURE.md`, `DATABASE_SCHEMA.md`, `BUSINESS_RULES.md`: architektura i reguły.
 - `DEPLOYMENT.md`: instalacja, aktualizacja, backup i restore.

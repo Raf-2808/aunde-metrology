@@ -1,5 +1,13 @@
 # Weryfikacja i odbiór
 
+## Aktualizacja wyglądu, 21.11.2026
+
+- Zastosowano komponent logo i paletę AUNDE Q006, z białym nagłówkiem i granatową nawigacją. Logo animuje południki, zachowując nieruchomy napis.
+- TypeScript, 3 testy Vitest i produkcyjny build Vite zakończyły się powodzeniem.
+- W lokalnej przeglądarce sprawdzono szerokości 320, 768, 1024 i 1440 px: brak poziomego przepełnienia strony. Szerokie tabele zachowują własne przewijanie.
+- Sprawdzono zwijanie menu z 225 do 76 px, dostępne nazwy przycisków po ukryciu etykiet i zachowanie stanu po odświeżeniu.
+- Ta aktualizacja dotyczy wyłącznie interfejsu. Testów backendu nie powtarzano; wyniki wcześniejszej weryfikacji pozostają opisane poniżej.
+
 Stan lokalny: 22.10.2026. Wyniki poniżej dotyczą faktycznie wykonanych poleceń, nie deklaracji gotowości infrastruktury.
 
 ## Wykonano

@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import * as echarts from 'echarts';
 import { api, ApiError, setCsrf } from './api';
 import { Spec, Article, Order, Plan, LabResult, User, Method, inSpec, complete } from './types';
+import { LogoAunde } from './LogoAunde';
+import { IkonaNawigacji } from './IkonaNawigacji';
 import './style.css';
 
 const statuses: Record<string, string> = {
@@ -56,8 +58,9 @@ function Login({ done }: { done: (u: User) => void }) {
   const [busy, setBusy] = useState(false);
   return (
     <main className="login">
-      <div className="brand">
-        AUNDE<span>LABORATORY SYSTEM</span>
+      <div className="login-brand">
+        <LogoAunde />
+        <span>LIMS / Laboratorium</span>
       </div>
       <form
         onSubmit={async (e) => {
@@ -100,6 +103,13 @@ function Login({ done }: { done: (u: User) => void }) {
 
 /** Obsługuje moduły, sesję i niezależne potwierdzanie chronionego dostępu. */
 function App() {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('aunde-lims-sidebar-collapsed') === '1';
+    } catch {
+      return false;
+    }
+  });
   const [user, setUser] = useState<User | null>(null),
     [loading, setLoading] = useState(true),
     [page, setPage] = useState('orders'),
@@ -294,13 +304,38 @@ function App() {
   if (loading) return <div className="loading">Ładowanie systemu…</div>;
   if (!user) return <Login done={setUser} />;
   return (
-    <div className="shell">
-      <aside>
-        <div className="brand">
-          AUNDE<span>LABORATORY SYSTEM</span>
-        </div>
-        <p className="navlabel">PRACA LABORATORIUM</p>
-        <nav>
+    <div className={'shell' + (sidebarCollapsed ? ' sidebar-collapsed' : '')}>
+      <aside className="sidebar" id="application-navigation">
+        <button
+          className="sidebar-toggle"
+          type="button"
+          aria-expanded={!sidebarCollapsed}
+          aria-controls="lims-navigation"
+          aria-label={sidebarCollapsed ? 'Rozwiń pasek boczny' : 'Zwiń pasek boczny'}
+          title={sidebarCollapsed ? 'Rozwiń pasek boczny' : 'Zwiń pasek boczny'}
+          onClick={() => {
+            const next = !sidebarCollapsed;
+            setSidebarCollapsed(next);
+            // Brak dostępu do pamięci przeglądarki nie blokuje nawigacji.
+            try {
+              localStorage.setItem('aunde-lims-sidebar-collapsed', next ? '1' : '0');
+            } catch {}
+          }}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
+            <path d={sidebarCollapsed ? 'm9 5 7 7-7 7' : 'm15 5-7 7 7 7'} />
+          </svg>
+        </button>
+        <p className="navlabel">LIMS / PRACA LABORATORIUM</p>
+        <nav id="lims-navigation" aria-label="Moduły laboratorium">
           {Object.entries(pages)
             .filter(
               ([k]) =>
@@ -311,9 +346,13 @@ function App() {
                 (k === 'admin' && can('configure')) ||
                 can(k),
             )
-            .map(([k, v], i) => (
+            .map(([k, v]) => (
               <button
                 key={k}
+                data-module={k}
+                aria-label={v}
+                aria-current={page === k ? 'page' : undefined}
+                title={v}
                 className={page === k ? 'active' : ''}
                 onClick={() =>
                   void run(async () => {
@@ -322,39 +361,50 @@ function App() {
                   })
                 }
               >
-                <span className="navicon">{['▦', '＋', '▤', '◈', '↶', '⌁', '▣', '⚙'][i]}</span>
-                {v}
+                <span className="navicon">
+                  <IkonaNawigacji modul={k} />
+                </span>
+                <span className="nav-label">{v}</span>
               </button>
             ))}
         </nav>
         <div className="sidebarbottom">
-          <strong>{user.login}</strong>
-          <small>{user.role}</small>
-          <button
-            onClick={() =>
-              void run(async () => {
-                await api('/logout', 'POST');
-                setUser(null);
-                setRecords([]);
-              })
-            }
-          >
-            Wyloguj
-          </button>
+          <span className="avatar" aria-hidden="true">
+            {user.login.slice(0, 2).toUpperCase()}
+          </span>
+          <div>
+            <strong>{user.login}</strong>
+            <small>{user.role}</small>
+          </div>
         </div>
       </aside>
       <section className="workspace">
-        <header>
-          <span>
-            Laboratorium <b>/</b> {pages[page]}
-          </span>
-          <span className="date">
-            {new Date().toLocaleDateString('pl-PL', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </span>
+        <header className="topbar">
+          <div className="logo">
+            <LogoAunde />
+            <span>LIMS / Laboratorium</span>
+          </div>
+          <div className="top-actions">
+            <span className="date">
+              {new Date().toLocaleDateString('pl-PL', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </span>
+            <button
+              className="logout"
+              onClick={() =>
+                void run(async () => {
+                  await api('/logout', 'POST');
+                  setUser(null);
+                  setRecords([]);
+                })
+              }
+            >
+              Wyloguj
+            </button>
+          </div>
         </header>
         <main className="content">
           <div className="heading">
