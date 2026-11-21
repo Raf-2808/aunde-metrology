@@ -16,6 +16,8 @@ Uruchom `Start-Lokalnie.ps1` w PowerShell. Skrypt instaluje zależności w `.loc
 
 ## Testy
 
+Lokalny zestaw fikcyjnych artykułów, kolejki i wyników oraz przykładowe wartości do wpisania opisano w `DEMO_FLOW.md`. Wszystkie te artykuły mają kod `DEMO-LAB-*` i nazwę z oznaczeniem `[DEMO]`. Dane z lokalnej bazy nie są publikowane w repozytorium.
+
 Backend: `cd backend`, `pip install -r requirements-dev.txt`, `pytest -q`.
 Frontend: `cd frontend`, `pnpm install --frozen-lockfile`, `pnpm test`, `pnpm build`.
 E2E: `pnpm exec playwright install chromium`, następnie `pnpm test:e2e` przy uruchomionym API. Testy przeglądarkowe nie zastępują odbioru całego procesu.

@@ -189,11 +189,13 @@ def wykryj_przekroczenia_spc(groups, config, spec):
         raise ValueError("Niezgodny plan próbkowania")
     means = [mean(g) for g in groups]
     m = means[-1]
+    # Średnia SPC może być okresowa; zgodność oceniamy z sumy pomiarów źródłowych.
+    specification_ok = ocen_charakterystyke(groups[-1], spec)["ok"]
     alarms = []
     for name, test in [
         ("UCL", m > config["ucl"]),
         ("LCL", m < config["lcl"]),
-        ("SPECIFICATION", not sprawdz_tolerancje(m, spec)),
+        ("SPECIFICATION", not specification_ok),
     ]:
         if test:
             alarms.append(

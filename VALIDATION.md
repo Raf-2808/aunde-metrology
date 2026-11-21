@@ -1,5 +1,12 @@
 # Weryfikacja i odbiór
 
+## Dane treningowe i poprawka SPC, 21.11.2026
+
+- Lokalny podgląd otrzymał fikcyjne artykuły i kolejkę opisaną w `DEMO_FLOW.md`. Zasilanie zachowuje istniejące dane i korzysta z aplikacyjnej walidacji kompletnych sesji. Kopię SQLite wykonano przed zasileniem.
+- Zestaw odtworzył błąd: statystyka średniej o rozwinięciu okresowym trafiała do walidatora dokładności pomiaru wejściowego. Naprawiono ocenę specyfikacji w SPC, wykorzystując istniejącą ocenę średniej z sumy źródłowych pomiarów, bez osłabiania walidacji wejść.
+- Trzy testy regresji najpierw odtworzyły błąd, a po poprawce przeszły. Obejmują zapis sesji i odczyt karty SPC, dla średniej zgodnej i niezgodnej.
+- Pełny zestaw backendu po poprawce: 28 testów zaliczonych, 1 test PostgreSQL pominięty lokalnie. Sprawdzono 31 fikcyjnych zleceń, 21 kompletnych sesji, dwie konfiguracje SPC i plan dziesiątego cyklu. Powtórne zasilenie dodało 0 rekordów, a liczba wiadomości w outbox pozostała niezmieniona.
+
 ## Aktualizacja wyglądu, 21.11.2026
 
 - Zastosowano komponent logo i paletę AUNDE Q006, z białym nagłówkiem i granatową nawigacją. Logo animuje południki, zachowując nieruchomy napis.
